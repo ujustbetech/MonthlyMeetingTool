@@ -6,7 +6,7 @@ import axios from 'axios';
 import './event.css'; // Ensure your CSS file is correctly linked
 import { IoMdClose } from "react-icons/io";
 
-const EventLoginPage = () => {                  
+const EventLoginPage = () => {  
   const router = useRouter();
   const { id } = router.query; // Get event name from URL
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -18,48 +18,59 @@ const EventLoginPage = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showModal, setShowModal] = useState(false); // State to show/hide modal
 
- useEffect(() => {
-  const checkRegistrationStatus = async () => {
-    const storedEventId = localStorage.getItem('lastEventId');
-    console.log('Current event ID:', id);
-    console.log('Stored event ID in localStorage:', storedEventId);
-    
-    // Detect a new event and clear the previous user's phone number if the event has changed
-    if (storedEventId !== id) {
-      console.log('New event detected, clearing localStorage for userPhoneNumber');
-      localStorage.removeItem('userPhoneNumber');
-      localStorage.setItem('lastEventId', id); // Store new event ID
-      setIsLoggedIn(false);
-      setPhoneNumber(''); // Clear the phone number input field
-    }
-
-    // Retrieve user phone number if already set in localStorage
-    const userPhoneNumber = localStorage.getItem('userPhoneNumber');
-    console.log('Retrieved userPhoneNumber from localStorage:', userPhoneNumber);
-    
-    if (userPhoneNumber && id) {
-      const registeredUserRef = doc(db, 'MonthlyMeeting', id, 'registeredUsers', userPhoneNumber);
-      const userDoc = await getDoc(registeredUserRef);
-      if (userDoc.exists()) {
-        console.log('User is registered for this event:', userDoc.data());
-        setIsLoggedIn(true);
-        fetchEventDetails();
-        fetchRegisteredUserCount();
-        fetchUserName(userPhoneNumber);
-      } else {
-        console.log('User is not registered for this event. Clearing state.');
-        setIsLoggedIn(false);
-        setPhoneNumber('');
-        localStorage.removeItem('userPhoneNumber'); // Clear if not registered
+  useEffect(() => {
+    const checkRegistrationStatus = async () => {
+      const storedEventId = localStorage.getItem('lastEventId');
+      console.log('Current event ID:', id);
+      console.log('Stored event ID in localStorage:', storedEventId);
+      
+      if (!id) {
+        console.error('Event ID is missing');
+        return;
       }
-    } else {
-      console.log('No userPhoneNumber found or event ID is missing.');
-    }
-    setLoading(false);
-  };
-
-  checkRegistrationStatus();
-}, [id]);
+  
+      if (storedEventId !== id) {
+        console.log('New event detected, clearing localStorage for userPhoneNumber');
+        localStorage.setItem('lastEventId', id); // Store new event ID
+      }
+  
+      // Retrieve user phone number if already set in localStorage
+      const userPhoneNumber = localStorage.getItem('mmOrbiter');
+      console.log('Retrieved userPhoneNumber from localStorage:', userPhoneNumber);
+  
+      if (!userPhoneNumber) {
+        console.log('No userPhoneNumber found in localStorage.');
+        return;
+      }
+  
+      if (storedEventId) {
+        try {
+          const registeredUserRef = doc(db, 'MonthlyMeeting', id, 'registeredUsers', userPhoneNumber);
+          const userDoc = await getDoc(registeredUserRef);
+          if (userDoc.exists()) {
+            console.log('User is registered for this event:', userDoc.data());
+            setIsLoggedIn(true);
+            fetchEventDetails();
+            fetchRegisteredUserCount();
+            fetchUserName(userPhoneNumber);
+          } else {
+            console.log('User is not registered for this event. Clearing state.');
+            setIsLoggedIn(false);
+            setPhoneNumber('');
+            localStorage.removeItem('userPhoneNumber'); // Clear if not registered
+          }
+        } catch (error) {
+          console.error('Error checking registration status:', error);
+        }
+      } else {
+        console.log('No stored event ID found.');
+      }
+      setLoading(false);
+    };
+  
+    checkRegistrationStatus();
+  }, [id]);
+  
 
 
 
@@ -72,7 +83,7 @@ const EventLoginPage = () => {
       });
 
       if (response.data.message[0].type === 'SUCCESS') {
-        localStorage.setItem('userPhoneNumber', phoneNumber);
+        localStorage.setItem('mmOrbiter', phoneNumber);
         setIsLoggedIn(true);
 
         await registerUserForEvent(phoneNumber);
@@ -113,7 +124,7 @@ const EventLoginPage = () => {
         });
   
         // Send WhatsApp message after successful registration
-        sendWhatsAppMessage(phoneNumber);
+        // sendWhatsAppMessage(phoneNumber);
       } catch (err) {
         console.error('Error registering user in Firebase:', err);
       }
@@ -254,14 +265,14 @@ const EventLoginPage = () => {
         <h2>{registeredUserCount}</h2>
         <p>Registered Orbiters</p>
       </div>
-      <div className="zoomLinkContainer">
+      {/* <div className="zoomLinkContainer">
         <a href={eventDetails?.zoomLink} target="_blank" rel="noopener noreferrer" className="zoomLink">
           <img src="/zoom-icon.png" alt="Zoom Link" width={30} />
           <span>Join Zoom Meet</span>
         </a>
-      </div>
+      </div> */}
       <div className="agenda">
-        <button className="agendabutton" onClick={handleOpenModal}>View Agenda</button>
+        <button className="agendabutton" onClick={handleOpenModal}>View Trajectory</button>
       </div>
 
       {/* Modal */}
@@ -269,11 +280,15 @@ const EventLoginPage = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <button className="close-modal" onClick={handleCloseModal}>×</button>
-            <h2>Agenda</h2>
-            {eventDetails?.agenda && eventDetails.agenda.length > 0 ? (
-              <div dangerouslySetInnerHTML={{ __html: eventDetails.agenda }} />
-            ) : (
-              <p>No agenda available.</p>
+            <h2>Trajectory</h2>
+{eventDetails?.agenda && eventDetails.agenda.length > 0 ? (
+  <div className='trajectoryCon' 
+    dangerouslySetInnerHTML={{ __html: eventDetails.agenda }} 
+     
+  />
+) : (
+  <p style={{ textAlign: "left" }}>No agenda available.</p>
+
             )}
           </div>
         </div>
