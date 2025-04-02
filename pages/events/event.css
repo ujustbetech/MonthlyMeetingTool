@@ -273,6 +273,13 @@ body {
 .eventDetails p {
   font-size: 20px;
   line-height: 20px;
+      display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+.eventDetails p span{
+  font-size: 16px;
 }
 
 
