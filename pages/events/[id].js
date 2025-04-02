@@ -100,21 +100,57 @@ const EventLoginPage = () => {
     }
   };
 
+  
   const registerUserForEvent = async (phoneNumber) => {
     if (id) {
       const registeredUsersRef = collection(db, 'MonthlyMeeting', id, 'registeredUsers');
       const newUserRef = doc(registeredUsersRef, phoneNumber);
-
+  
       try {
         await setDoc(newUserRef, {
           phoneNumber: phoneNumber,
           registeredAt: new Date(),
         });
+  
+        // Send WhatsApp message after successful registration
+        sendWhatsAppMessage(phoneNumber);
       } catch (err) {
         console.error('Error registering user in Firebase:', err);
       }
     }
   };
+  
+  const sendWhatsAppMessage = async (phoneNumber) => {
+    const accessToken = "EAAHwbR1fvgsBOwUInBvR1SGmVLSZCpDZAkn9aZCDJYaT0h5cwyiLyIq7BnKmXAgNs0ZCC8C33UzhGWTlwhUarfbcVoBdkc1bhuxZBXvroCHiXNwZCZBVxXlZBdinVoVnTB7IC1OYS4lhNEQprXm5l0XZAICVYISvkfwTEju6kV4Aqzt4lPpN8D3FD7eIWXDhnA4SG6QZDZD"; // Replace with your Meta API token
+    const phoneId = "527476310441806";  // Found in Meta Developer Console
+  
+    const messageData = {
+      messaging_product: "whatsapp",
+      to: phoneNumber,
+      type: "template",
+      template: {
+        name: "mm_thankyoumessage",
+        language: { code: "en" } // Template is in English-Hindi mix
+      }
+    };
+  
+    try {
+      const response = await axios.post(
+        `https://graph.facebook.com/v21.0/${phoneId}/messages`,
+        messageData,
+        {
+          headers: {
+            "Authorization": `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      console.log("WhatsApp template message sent:", response.data);
+    } catch (error) {
+      console.error("Error sending WhatsApp template message:", error);
+    }
+  };
+  
 
   // Fetch event details from Firestore
   const fetchEventDetails = async () => {
@@ -171,7 +207,7 @@ const EventLoginPage = () => {
                   />
                 </li>
                 <li>
-                  <button className="login" type="submit">Login</button>
+                  <button className="login" type="submit">Register</button>
                 </li>
               </ul>
             </form>
