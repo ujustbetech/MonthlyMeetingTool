@@ -5,9 +5,7 @@ import { useRouter } from 'next/router';
 import Layout from '../../../../component/Layout';
 import "../../../../src/app/styles/main.scss";
 import { IoMdClose } from "react-icons/io";
-import { CiSearch } from "react-icons/ci";
 import ExportToExcel from '../../ExporttoExcel';
-import { GrFormView } from "react-icons/gr";
 import Modal from 'react-modal';
 import { FaSearch } from "react-icons/fa";
 

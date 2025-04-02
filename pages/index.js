@@ -14,7 +14,7 @@ const HomePage = () => {
       <img src="/ujustlogo.png" alt="Logo" className="logo" />
     </div>
     <div style={{ padding: '20px' }}>
-      <h1>Welcome to the Event Management System</h1>
+      <h1>Welcome to the MonthlyMeeting System</h1>
     </div>
     </div>
     </>
