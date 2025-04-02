@@ -261,7 +261,7 @@ const EventLoginPage = () => {
         <h2 className="eventName">to {eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
       </div>
       <div className="eventDetails">
-        <p>Date & Time: {eventTime}</p>
+        <p><span> Date & Time</span>{eventTime}</p>
         <h2>{registeredUserCount}</h2>
         <p>Registered Orbiters</p>
       </div>
