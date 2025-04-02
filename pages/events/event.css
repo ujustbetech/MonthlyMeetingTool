@@ -286,7 +286,7 @@ body {
   border-radius: 30px;
   padding: 0 15px;
   flex-direction: column;
-  align-items: center;
+
 }
 
 .mainContainer li {
@@ -294,6 +294,12 @@ body {
   font-size: 16px;
   font-weight: 500;
   color: #333;
+  text-align: center;
+}
+
+.trajectoryCon li{
+  text-align: left;
+  list-style-type: disc;
 }
 
 /* Responsiveness */
