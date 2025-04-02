@@ -124,7 +124,7 @@ const EventLoginPage = () => {
         });
   
         // Send WhatsApp message after successful registration
-        // sendWhatsAppMessage(phoneNumber);
+        sendWhatsAppMessage(phoneNumber);
       } catch (err) {
         console.error('Error registering user in Firebase:', err);
       }
@@ -261,7 +261,7 @@ const EventLoginPage = () => {
         <h2 className="eventName">to {eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
       </div>
       <div className="eventDetails">
-        <p>{eventTime}</p>
+        <p>Date & Time: {eventTime}</p>
         <h2>{registeredUserCount}</h2>
         <p>Registered Orbiters</p>
       </div>
