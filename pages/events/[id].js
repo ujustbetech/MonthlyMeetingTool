@@ -243,22 +243,24 @@ const EventLoginPage = () => {
     return <p style={{ color: 'red' }}>{error}</p>;
   }
 
-  const eventTime = eventDetails?.time?.seconds
+ const eventTime = eventDetails?.time?.seconds
   ? new Date(eventDetails.time.seconds * 1000).toLocaleString('en-GB', {
       day: '2-digit',
       month: 'short', // Abbreviated month name like "Jan"
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      hour12: false // For 24-hour format
+      hour12: true, // 12-hour format
+      hourCycle: 'h12' // Ensures 12-hour format (with AM/PM)
     })
   : "Invalid time";
+
 
   return (
     <div className="mainContainer">
       <div className='UserDetails'>
         <h1 className="welcomeText">Welcome {userName || 'User'}</h1>
-        <h2 className="eventName">to {eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
+        <h2 className="eventName">{eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
       </div>
       <div className="eventDetails">
         <p><span> Date & Time</span>{eventTime}</p>
