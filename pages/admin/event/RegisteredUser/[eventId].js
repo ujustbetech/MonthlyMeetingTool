@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '../../../../firebaseConfig';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion,query,orderBy,onSnapshot,setDoc,serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion,query,orderBy,onSnapshot,setDoc,where,serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/router'; 
 import Layout from '../../../../component/Layout';
 import "../../../../src/app/styles/main.scss";
@@ -209,29 +209,107 @@ const RegisteredUsers = () => {
     await updateFeedback(currentUserId, feedbackEntry);
     closeAddFeedbackModal();
   };
-  const markAttendance = async (phoneNumber) => {
+ const markAttendance = async (phoneNumber) => {
     if (!eventId) {
       console.error("Event ID is missing");
       return;
     }
   
     try {
-      const attendanceRef = doc(db, "MonthlyMeeting", eventId, "registeredUsers", phoneNumber, "attendance","status");
-      await setDoc(attendanceRef, {
-        marked: true,
-        timestamp: serverTimestamp()
+      // Reference to the user's document in the registeredUsers collection
+      const userRef = doc(db, "MonthlyMeeting", eventId, "registeredUsers", phoneNumber);
+    
+      // Update only the attendanceStatus field without affecting other data
+      await updateDoc(userRef, {
+        attendanceStatus: true,  // Mark attendance as true (can be false depending on the action)
+        timestamp: serverTimestamp()  // Add timestamp for when the attendance was marked
       });
-  
+    
       alert("Attendance marked successfully!");
     } catch (error) {
       console.error("Failed to mark attendance:", error);
+      alert("Error marking attendance.");
     }
   };
+  const handleMeetingDone = async () => {
+    const accessToken = "EAAHwbR1fvgsBOwUInBvR1SGmVLSZCpDZAkn9aZCDJYaT0h5cwyiLyIq7BnKmXAgNs0ZCC8C33UzhGWTlwhUarfbcVoBdkc1bhuxZBXvroCHiXNwZCZBVxXlZBdinVoVnTB7IC1OYS4lhNEQprXm5l0XZAICVYISvkfwTEju6kV4Aqzt4lPpN8D3FD7eIWXDhnA4SG6QZDZD"; // Replace with your Meta API token
+    const phoneNumberId = "527476310441806";  
+  
+    if (!eventId) {
+      alert("Event ID is missing!");
+      return;
+    }
+  
+    try {
+      const usersRef = collection(db, "MonthlyMeeting", eventId, "registeredUsers");
+      const q = query(usersRef, where("attendanceStatus", "==", true));
+      const querySnapshot = await getDocs(q);
+  
+      if (querySnapshot.empty) {
+        alert("No attendees found.");
+        return;
+      }
+  
+      for (const docSnap of querySnapshot.docs) {
+        const phoneNumber = docSnap.id;
+  
+        // Get user name from userdetails/{phoneNumber}
+        const userDocRef = doc(db, "userdetails", phoneNumber);
+        const userDocSnap = await getDoc(userDocRef);
+        const userName = userDocSnap.exists() ? userDocSnap.data()[" Name"] || "there" : "there";
+  
+        // Send WhatsApp Message
+        const response = await fetch(`https://graph.facebook.com/v21.0/${phoneNumberId}/messages`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            to: `91${phoneNumber}`, // Make sure it's a valid WhatsApp number
+            type: "template",
+            template: {
+              name: "post_thankyou_mm",
+              language: {
+                code: "en",
+              },
+              components: [
+                {
+                  type: "body",
+                  parameters: [
+                    {
+                      type: "text",
+                      text: userName,
+                    },
+                  ],
+                },
+              ],
+            },
+          }),
+        });
+  
+        const result = await response.json();
+        console.log("WhatsApp Response:", result);
+      }
+  
+      alert("Thank you messages sent to all attendees.");
+    } catch (error) {
+      console.error("Error sending WhatsApp messages:", error);
+      alert("Something went wrong while sending messages.");
+    }
+  };
+  
   
   return (
     <Layout>
       <section className='c-userslist box'>
+       <div className="twobtn">
         <ExportToExcel eventId={eventId} />
+        <button className="m-button-7" onClick={handleMeetingDone} style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}>
+ Meeting Done
+</button>
+</div>
         <button className="m-button-5" onClick={() => window.history.back()}>
           Back
         </button>
