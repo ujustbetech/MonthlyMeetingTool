@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '../../../../firebaseConfig';
-import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion,query,orderBy,onSnapshot,setDoc,where,serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, updateDoc, arrayUnion,query,orderBy,onSnapshot,where,serverTimestamp } from 'firebase/firestore';
 import { useRouter } from 'next/router'; 
 import Layout from '../../../../component/Layout';
 import "../../../../src/app/styles/main.scss";
@@ -209,7 +209,7 @@ const RegisteredUsers = () => {
     await updateFeedback(currentUserId, feedbackEntry);
     closeAddFeedbackModal();
   };
- const markAttendance = async (phoneNumber) => {
+  const markAttendance = async (phoneNumber) => {
     if (!eventId) {
       console.error("Event ID is missing");
       return;
@@ -304,7 +304,7 @@ const RegisteredUsers = () => {
   return (
     <Layout>
       <section className='c-userslist box'>
-       <div className="twobtn">
+      <div className="twobtn">
         <ExportToExcel eventId={eventId} />
         <button className="m-button-7" onClick={handleMeetingDone} style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}>
  Meeting Done
@@ -313,6 +313,7 @@ const RegisteredUsers = () => {
         <button className="m-button-5" onClick={() => window.history.back()}>
           Back
         </button>
+      
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
         <table className='table-class'>
@@ -324,9 +325,12 @@ const RegisteredUsers = () => {
             <tr>
               <th>Sr no</th>
               <th>Registered Number</th>
-              <th>UJB Code</th> 
+              {/* <th>UJB Code</th>  */}
               <th>User Name</th> 
               <th>Category</th>
+              <th>Type</th>
+    <th>Register</th>
+    <th>Interested In</th>
               <th>Feedback</th>
               <th>Attendance</th>
             </tr>
@@ -346,7 +350,7 @@ const RegisteredUsers = () => {
    </div>
  
           </th>
-          <th>
+          {/* <th>
           <div class="search">
       <input type="text" class="searchTerm" placeholder="Search by UJB Code"
             value={ujbCodeFilter}
@@ -356,7 +360,7 @@ const RegisteredUsers = () => {
      </button>
    </div>
          
-          </th>
+          </th> */}
           <th>
 
           <div class="search">
@@ -389,31 +393,23 @@ const RegisteredUsers = () => {
                 <tr key={user.id}>
                   <td>{index + 1}</td> 
                   <td>{user.id}</td> 
-                  <td>{user.ujbcode}</td>  
+                  {/* <td>{user.ujbcode}</td>   */}
                   <td>{user.name || 'Unknown'}</td> 
                   <td>{user.category}</td> 
-                  {/* <td>
-                    <select
-                      className="feedback-select"
-                      onChange={(e) => handlePredefinedFeedbackChange(user.id, e.target.value)}
-                    >
-                      <option value="">Select Feedback</option>
-                      {predefinedFeedbacks.map((feedback, idx) => (
-                        <option key={idx} value={feedback}>{feedback}</option>
-                      ))}
-                    </select>
+                  <td>{user.type || '—'}</td>
+        <td>{user.register ? '✅' : '❌'}</td>
+        <td>
+          {user.interestedIn ? (
+            <ul className="list-disc ml-4">
+              {Object.entries(user.interestedIn).map(([key, value]) =>
+                value ? <li key={key}>{key}</li> : null
+              )}
+            </ul>
+          ) : (
+            '—'
+          )}
+        </td>
 
-                    <input
-                      className="feedback-input"
-                      type="text"
-                      value={feedbacks[user.id]?.custom || ''}
-                      onChange={(e) => handleCustomFeedbackChange(user.id, e.target.value)}
-                      placeholder="Enter feedback"
-                    />
-                    <button className='m-button-6' onClick={() => submitFeedback(user.id)}>
-                      Add
-                    </button>
-                  </td> */}
                   <td>
                     <div className="twobtn">
                     <button className='m-button-7' onClick={() => openModal(user.feedback, user.name)} style={{ marginLeft: '10px', backgroundColor: '#e2e2e2', color: 'black' }}>

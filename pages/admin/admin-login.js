@@ -47,7 +47,7 @@ const AdminLogin = () => {
             required
           />
         </div>
-        <button type="submit" className={styles.loginButton}>Login</button>
+        <button type="submit" className="m-button-7">Login</button>
       </form>
     </div>
   );

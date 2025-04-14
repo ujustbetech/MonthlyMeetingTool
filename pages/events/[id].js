@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { db } from '../../firebaseConfig';
-import { doc, getDoc, collection, getDocs, setDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, setDoc,  updateDoc} from 'firebase/firestore';
 import axios from 'axios';
 import './event.css'; // Ensure your CSS file is correctly linked
 import { IoMdClose } from "react-icons/io";
@@ -113,21 +113,34 @@ const EventLoginPage = () => {
 
   
   const registerUserForEvent = async (phoneNumber) => {
-    if (id) {
-      const registeredUsersRef = collection(db, 'MonthlyMeeting', id, 'registeredUsers');
-      const newUserRef = doc(registeredUsersRef, phoneNumber);
+    if (!id) return;
   
-      try {
+    const registeredUsersRef = collection(db, 'MonthlyMeeting', id, 'registeredUsers');
+    const newUserRef = doc(registeredUsersRef, phoneNumber);
+  
+    try {
+      const userDoc = await getDoc(newUserRef);
+  
+      if (userDoc.exists()) {
+        // Update existing document
+        await updateDoc(newUserRef, {
+          register: true,
+          updatedAt: new Date()
+        });
+      } else {
+        // Create new document
         await setDoc(newUserRef, {
           phoneNumber: phoneNumber,
           registeredAt: new Date(),
+          register: true
         });
-  
-        // Send WhatsApp message after successful registration
-        sendWhatsAppMessage(phoneNumber);
-      } catch (err) {
-        console.error('Error registering user in Firebase:', err);
       }
+  
+      // Optionally send WhatsApp message
+      // sendWhatsAppMessage(phoneNumber);
+  
+    } catch (err) {
+      console.error('Error registering/updating user in Firebase:', err);
     }
   };
   
@@ -243,7 +256,7 @@ const EventLoginPage = () => {
     return <p style={{ color: 'red' }}>{error}</p>;
   }
 
- const eventTime = eventDetails?.time?.seconds
+  const eventTime = eventDetails?.time?.seconds
   ? new Date(eventDetails.time.seconds * 1000).toLocaleString('en-GB', {
       day: '2-digit',
       month: 'short', // Abbreviated month name like "Jan"
@@ -255,15 +268,14 @@ const EventLoginPage = () => {
     })
   : "Invalid time";
 
-
   return (
     <div className="mainContainer">
       <div className='UserDetails'>
         <h1 className="welcomeText">Welcome {userName || 'User'}</h1>
-        <h2 className="eventName">{eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
+        <h2 className="eventName">to {eventDetails ? eventDetails.Eventname : 'Event not found'}</h2>
       </div>
       <div className="eventDetails">
-        <p><span> Date & Time</span>{eventTime}</p>
+        <p>{eventTime}</p>
         <h2>{registeredUserCount}</h2>
         <p>Registered Orbiters</p>
       </div>
