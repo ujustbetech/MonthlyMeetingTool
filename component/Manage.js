@@ -109,11 +109,27 @@ const ManageEvents = () => {
                                     </button>
                                 </td>
                                 <td style={{ padding: '10px', border: '1px solid #ddd' }}>
-                                    <div className="twobtn">
-                                        <button className="m-button-7" onClick={() => handleViewUsers(event.id)} style={{ marginLeft: '10px', backgroundColor: '#e2e2e2', color: 'black' }}><GrFormView/>View</button>
-                                        <button className="m-button-7" onClick={() => handleEditEvent(event.id)} style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}><CiEdit/>Edit</button>
-                                    </div>
-                                </td>
+    <div className="twobtn">
+        <button 
+            className="m-button-7" 
+            onClick={() => handleViewUsers(event.id)} 
+            style={{ marginLeft: '10px', backgroundColor: '#e2e2e2', color: 'black' }}>
+            <GrFormView/> View
+        </button>
+        <button 
+            className="m-button-7" 
+            onClick={() => handleEditEvent(event.id)} 
+            style={{ marginLeft: '10px', backgroundColor: '#f16f06', color: 'white' }}>
+            <CiEdit/> Edit
+        </button>
+        <button 
+            className="m-button-7" 
+            onClick={() => router.push(`/admin/addusers/${event.id}`)}
+            style={{ marginLeft: '10px',backgroundColor: '#e2e2e2', color: 'black' }}>
+             Add User
+        </button>
+    </div>
+</td>
                             </tr>
                         ))}
                     </tbody>

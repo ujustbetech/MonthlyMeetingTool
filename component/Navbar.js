@@ -25,11 +25,11 @@ const Navbar = (props) => {
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
                             <ul>
-                                <li><Link href="/admin/event/addEvent">Add Event</Link></li>
+                                <li><Link href="/admin/event/create-event">Add Event</Link></li>
                                 <li><Link href="/admin/event/manageEvent">Manage Event</Link></li>
                             </ul>
                         </li>
-                        <li>
+                        {/* <li>
                             <Link href="/admin/event/addEvent">
                                 <span className="icons"><MdImage /></span>
                                 <span className="linklabel">Creatives</span>
@@ -39,7 +39,7 @@ const Navbar = (props) => {
                                 <li><Link href="/admin/event/addEvent">Add Creatives</Link></li>
                                 <li><Link href="/admin/event/manageEvent">Manage Creatives</Link></li>
                             </ul>
-                        </li>
+                        </li> */}
                         {/* Users */}
                         <li>
                             <Link href="/admin/event/userlist">
@@ -52,7 +52,7 @@ const Navbar = (props) => {
                             </ul>
                         </li>
                         <li>
-                            <Link href="/admin/event/upload">
+                            <Link href="/admin/add-users/">
                                 <span className="icons"><RiListSettingsLine /></span>
                                 <span className="linklabel">Send Link</span>
                             </Link>
