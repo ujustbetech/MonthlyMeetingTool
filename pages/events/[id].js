@@ -137,7 +137,7 @@ const EventLoginPage = () => {
       }
   
       // Optionally send WhatsApp message
-      // sendWhatsAppMessage(phoneNumber);
+      sendWhatsAppMessage(phoneNumber);
   
     } catch (err) {
       console.error('Error registering/updating user in Firebase:', err);
