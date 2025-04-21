@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef ,useEffect} from 'react';
 import { storage, db } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion,getDoc } from 'firebase/firestore';
 
 import 'react-quill/dist/quill.snow.css';
 import dynamic from 'next/dynamic';
@@ -19,6 +19,22 @@ const MultiImageUploadAccordion = ({ eventID, fetchData }) => {
   ]);
 
   const fileInputRefs = useRef({});
+  const [uploadedImages, setUploadedImages] = useState([]);
+
+  const fetchImages = async () => {
+    const docRef = doc(db, 'MonthlyMeeting', eventID);
+    const docSnap = await getDoc(docRef);
+  
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setUploadedImages(data.imageUploads || []);
+    }
+  };
+  
+  useEffect(() => {
+    fetchImages();
+  }, []);
+  
 
   const handleInputChange = (index, field, value) => {
     const updatedSections = [...sections];
@@ -215,6 +231,33 @@ const MultiImageUploadAccordion = ({ eventID, fetchData }) => {
       >
         + Add Image Section
       </button>
+      <div style={{ marginTop: '20px' }}>
+  <h3>Uploaded Images</h3>
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+    {uploadedImages.map((upload, index) => (
+      <div
+        key={index}
+        style={{
+          border: '1px solid #ccc',
+          padding: '10px',
+          borderRadius: '8px',
+          maxWidth: '300px',
+          width: '100%',
+        }}
+      >
+        <p><strong>Type:</strong> {upload.type}</p>
+        <div dangerouslySetInnerHTML={{ __html: upload.description }} />
+        <img
+          src={upload.image.url}
+          alt={upload.image.name}
+          style={{ width: '100%', height: 'auto', borderRadius: '4px' }}
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
+
     </div>
   );
 };
