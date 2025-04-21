@@ -1,13 +1,28 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { storage, db } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion ,getDoc} from 'firebase/firestore';
 
 const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
   const [selectedDocs, setSelectedDocs] = useState([]);
   const [docDescription, setDocDescription] = useState('');
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+  const [documentUploads, setDocumentUploads] = useState([]);
+
+  const fetchDoc = async () => {
+    const docRef = doc(db, 'MonthlyMeeting', eventID);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      setDocumentUploads(data.documentUploads || []);
+    }
+  };
+
+  useEffect(() => {
+    fetchDoc();
+  }, [eventID]);
 
   const handleDocUpload = async () => {
     if (!eventID) {
@@ -62,6 +77,8 @@ const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
   
 
   return (
+    <div>
+    <h3>Upload Meeting Documents</h3>
     <ul>
       <li className="form-row">
         <h4>Upload PDF/Word Document:<sup>*</sup></h4>
@@ -82,7 +99,6 @@ const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
           <button type="button" onClick={() => fileInputRef.current.click()}>
             Select Files
           </button>
-
           {selectedDocs.length > 0 && (
             <ul style={{ marginTop: '10px' }}>
               {selectedDocs.map((file, index) => (
@@ -118,6 +134,48 @@ const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
         </div>
       </li>
     </ul>
+
+   
+    <h3 style={{ marginTop: '2rem' }}>Uploaded Documents</h3>
+
+{documentUploads.length === 0 ? (
+  <p>No documents uploaded yet.</p>
+) : (
+  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+    <thead>
+      <tr style={{ backgroundColor: '#f0f0f0' }}>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>#</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Description</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Uploaded On</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Files</th>
+      </tr>
+    </thead>
+    <tbody>
+      {documentUploads.map((upload, index) => (
+        <tr key={index}>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{upload.description}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+            {new Date(upload.timestamp).toLocaleString()}
+          </td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+            <ul style={{ margin: 0, paddingLeft: '1rem' }}>
+              {upload.files.map((file, idx) => (
+                <li key={idx}>
+                  <a href={file.url} target="_blank" rel="noopener noreferrer">
+                    {file.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
+
+  </div>
   );
 };
 
