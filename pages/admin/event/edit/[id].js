@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import { ref, uploadBytesResumable, getDownloadURL, getStorage, uploadBytes } from "firebase/storage";
 import Layout from '../../../../component/Layout';
 import "../../../../src/app/styles/main.scss";
-import BasicInfoSection from '../../../../component/BasicInfo';
 import FacilitatorSection from '../../../../component/FacilatorSection';
 import ReferralSection from '../../../../component/ReferralSection';
 import E2ASection from '../../../../component/E2ASection';
@@ -15,6 +14,7 @@ import RequirementPage from '../../../../component/RequirementSection';
 import DocumentUpload from '../../../../component/UploadMOM';
 import ImageUpload from '../../../../component/UploadImage';
 import ParticipantSection from '../../../../component/ParticipantsSection';
+import EditForm from '../../../../component/EditForm';
 
 const EditAdminEvent = () => {
   const router = useRouter();
@@ -99,7 +99,7 @@ const EditAdminEvent = () => {
 ) : (
   <>
    {activeTab === 0 && <>
-          <BasicInfoSection data={eventData} id={id} />
+          <EditForm data={eventData} id={id} />
         </>}
    </>
 )}
