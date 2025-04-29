@@ -30,7 +30,7 @@ const EditAdminEvent = () => {
 
 
   const tabs = [
-    'Basic Info', 'Facilitator', 'Referral Possibility', '1-2-1 Interaction', 'E2A', 'Prospect Identified', 'Knowledge Sharing', 'Upload Mom', 'Add Creatives', 'Requirement'
+    'Event Info', 'Facilitator', 'Referral Possibilities', 'Proposed Interaction', 'Proposed E2A', 'Prospects Identified', 'Knowledge Sharing', 'Upload MoM', 'Add Creatives', 'Requirements'
   ];
 
   const fetchEvent = async (index) => {
@@ -80,20 +80,24 @@ const EditAdminEvent = () => {
   
   return (
     <Layout>
-      <section className='c-form box'>
-        <h2>Edit Event</h2>
-        <div className='tab-header'>
-         
-           {tabs.map((tab, index) => (
-        <button
-          key={index}
-          className={index === activeTab ? 'active' : ''}
-          onClick={() => handleTabClick(index)}
-        >
-          {tab}
-        </button>
-      ))}
-        </div>
+      
+     
+        <div className="step-progress-bar">
+  {tabs.map((tab, index) => (
+    <div key={index} className="step-container">
+      <button
+        className={`step ${activeTab === index ? "active" : ""}`}
+        onClick={() => handleTabClick(index)}
+      >
+        {index + 1}
+      </button>
+      <div className="step-title">{tab}</div>
+    </div>
+  ))}
+</div>
+
+<section className='c-form box'>
+      
         {loading ? (
   <p>Loading...</p>
 ) : (
