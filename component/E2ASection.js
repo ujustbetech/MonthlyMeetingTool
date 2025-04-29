@@ -118,12 +118,12 @@ const E2ASection = ({ eventID, data = {}, fetchData }) => {
 
   return (
     <div className='content-wrapper'>
-        <h3>E2A Sections</h3>
+        <h3>Proposed E2A</h3>
       <div className='form-row'>
         <div className='repeater-content'>
           {e2aSections.map((section, index) => (
             <div key={index} className='formBoxCon'>
-              <h4>Name:<sup>*</sup></h4>
+              <h4>Facilitator:<sup>*</sup></h4>
               <div className='autosuggest'>
                 <input
                   type='text'
@@ -145,7 +145,7 @@ const E2ASection = ({ eventID, data = {}, fetchData }) => {
 
               </div>
 
-              <h4>Description:<sup>*</sup></h4>
+              <h4>Topic and Description:<sup>*</sup></h4>
               <textarea
                 placeholder='Description'
                 value={section.e2aDesc}

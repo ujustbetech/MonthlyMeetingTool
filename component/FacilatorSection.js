@@ -110,7 +110,7 @@ const FacilitatorSection = (props) => {
 
   return (
     <div className='content-wrapper'>
-        <h3>Facilitator Sections</h3>
+        <h3>Facilitator's Section</h3>
       <div className='form-row'>
         <div className='repeater-content'>
           {sections.map((section, index) => (
@@ -138,7 +138,7 @@ const FacilitatorSection = (props) => {
 
               </div>
 
-              <h4>Description:<sup>*</sup></h4>
+              <h4>Edification of Facilitator:<sup>*</sup></h4>
               <div className='multipleitem'>
                 <textarea
                   placeholder="Description"

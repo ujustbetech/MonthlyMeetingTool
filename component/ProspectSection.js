@@ -117,16 +117,16 @@ const ProspectSection = ({ eventID, data = {}, fetchData }) => {
   
   return (
     <div className="content-wrapper">
-        <h3>Prospect Sections</h3>
+        <h3>Prospect Section</h3>
       <div className="form-row">
         <div className="repeater-content">
           {prospectSections.map((section, index) => (
             <div key={index} className="formBoxCon">
-              <h4>Select Name:<sup>*</sup></h4>
+              <h4>Select Orbiter Name:<sup>*</sup></h4>
               <div className="autosuggest">
                 <input
                   type="text"
-                  placeholder="Search Prospect"
+                  placeholder="Search Orbiter"
                   value={section.prospectSearch || section.prospect}
                   onChange={(e) => handleSearchChange(index, e.target.value)}
                   onFocus={() => setFilteredUsers(userList)}
@@ -150,7 +150,7 @@ const ProspectSection = ({ eventID, data = {}, fetchData }) => {
                 onChange={(e) => handleFieldChange(index, 'prospectName', e.target.value)}
               />
 
-              <h4>Description:<sup>*</sup></h4>
+              <h4>Detailed Info:<sup>*</sup></h4>
               <textarea
                 placeholder="Description"
                 value={section.prospectDescription}

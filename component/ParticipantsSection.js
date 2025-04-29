@@ -113,12 +113,12 @@ const ParticipantSection = ({ eventID, data = {}, fetchData }) => {
 
   return (
     <div className='content-wrapper'>
-        <h3>121 Interaction Sections</h3>
+        <h3>121 Interaction Section</h3>
       <div className='form-row'>
         <div className='repeater-content'>
           {sections.map((section, index) => (
             <div key={index} className='formBoxCon'>
-              <h4>Select Participant 1:<sup>*</sup></h4>
+              <h4>Proposed by:<sup>*</sup></h4>
               <div className='autosuggest'>
                 <input
                   type="text"
@@ -139,7 +139,7 @@ const ParticipantSection = ({ eventID, data = {}, fetchData }) => {
                   )}
               </div>
 
-              <h4>Select Participant 2:<sup>*</sup></h4>
+              <h4>Proposed with:<sup>*</sup></h4>
               <div className='autosuggest'>
                 <input
                   type="text"

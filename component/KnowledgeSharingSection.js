@@ -122,11 +122,11 @@ const KnowledgeSharingSection = ({ eventID, data = {}, fetchData }) => {
         <div className="repeater-content">
           {knowledgeSections.map((section, index) => (
             <div key={index} className="formBoxCon">
-              <h4>Select Name:<sup>*</sup></h4>
+              <h4>Select Orbiter's Name:<sup>*</sup></h4>
               <div className="autosuggest">
                 <input
                   type="text"
-                  placeholder="Search Knowledge"
+                  placeholder="Search Orbiter"
                   value={section.search || section.name}
                   onChange={(e) => handleSearchChange(index, e.target.value)}
                   onFocus={() => setFilteredUsers(userList)}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { doc, updateDoc, collection, Timestamp } from 'firebase/firestore';
+import { doc, setDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 
 const BasicInfoSection = (props) => {
@@ -27,37 +27,39 @@ const [zoomLink, setZoomLink] = useState(props?.data?.zoomLink || '');
 
 
 
-const handleCreateEvent = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
-  setSuccess('');
+  const handleCreateEvent = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    setSuccess('');
 
-  try {
-    const existingEventId = props?.id; 
-    if (!existingEventId) {
-      setError('No event ID provided for update.');
+    try {
+      const monthlyMeetRef = collection(db, 'MonthlyMeeting');
+      const uniqueId = doc(monthlyMeetRef).id;
+      const eventDocRef = doc(monthlyMeetRef, uniqueId);
+
+      await setDoc(eventDocRef, {
+        Eventname: eventName,
+        time: Timestamp.fromDate(new Date(eventTime)),
+        agenda: agendaPoints,
+        zoomLink: zoomLink,
+      });
+
+      setEventId(uniqueId);
+      setSuccess('Event created successfully!');
+      // Reset the form if needed
+      setEventName('');
+      setEventTime('');
+      setAgendaPoints(['']);
+      setZoomLink('');
+    } catch (error) {
+      setError( );
+      console.error("Firebase Error:", error);
+    } finally {
       setLoading(false);
-      return;
     }
+  };
 
-    const eventDocRef = doc(db, 'MonthlyMeeting', existingEventId);
-
-    await updateDoc(eventDocRef, {
-      Eventname: eventName,
-      time: Timestamp.fromDate(new Date(eventTime)),
-      agenda: agendaPoints,
-      zoomLink: zoomLink,
-    });
-
-    setSuccess('Event updated successfully!');
-  } catch (error) {
-    setError(`Failed to update event: ${error.message}`);
-    console.error("Firebase Error:", error);
-  } finally {
-    setLoading(false);
-  }
-};
 
 
   return (

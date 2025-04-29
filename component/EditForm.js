@@ -62,7 +62,7 @@ const handleUpdateEvent = async (e) => {
 
 
   return (
-    <section className='c-form box'>
+   <div>
       <h2>Update Event</h2>
       <form onSubmit={handleUpdateEvent}>
         <ul>
@@ -171,7 +171,7 @@ const handleUpdateEvent = async (e) => {
           </div>
         )}
       </form>
-    </section>
+   </div>
   );
 };
 
