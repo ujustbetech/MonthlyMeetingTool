@@ -220,6 +220,18 @@ body {
     }
 
   }
+  input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    // padding-right: 40px;
+    line-height: 20px;
+    border: 1px solid $bordercolor;
+    font-size: 16px;
+    // font-family: inherit;
+    border-radius: 5px;
+    box-sizing: border-box;
+
+  }
 
   input[type="text"] {
     width: 100%;
