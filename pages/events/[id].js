@@ -137,7 +137,7 @@ const EventLoginPage = () => {
       }
   
       // Optionally send WhatsApp message
-      sendWhatsAppMessage(phoneNumber);
+      // sendWhatsAppMessage(phoneNumber);
   
     } catch (err) {
       console.error('Error registering/updating user in Firebase:', err);
@@ -296,10 +296,14 @@ const EventLoginPage = () => {
             <button className="close-modal" onClick={handleCloseModal}>×</button>
             <h2>Trajectory</h2>
 {eventDetails?.agenda && eventDetails.agenda.length > 0 ? (
-  <div className='trajectoryCon' 
-    dangerouslySetInnerHTML={{ __html: eventDetails.agenda }} 
-     
-  />
+  <div className='trajectoryCon'>
+  <ul>
+    {eventDetails.agenda.map((point, index) => (
+      <li key={index}>{point}</li>
+    ))}
+  </ul>
+</div>
+
 ) : (
   <p style={{ textAlign: "left" }}>No agenda available.</p>
 
