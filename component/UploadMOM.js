@@ -2,6 +2,7 @@ import React, { useState, useRef,useEffect } from 'react';
 import { storage, db } from '../firebaseConfig';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc, arrayUnion ,getDoc} from 'firebase/firestore';
+import Swal from 'sweetalert2';
 
 const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
   const [selectedDocs, setSelectedDocs] = useState([]);
@@ -74,10 +75,102 @@ const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
   
     setLoading(false);
   };
+  const handleDeleteUpload = async (timestampToDelete) => {
+    const confirmResult = await Swal.fire({
+      title: 'Are you sure?',
+      text: "This document upload will be permanently removed!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    });
+  
+    if (!confirmResult.isConfirmed) return;
+  
+    try {
+      const docRef = doc(db, 'MonthlyMeeting', eventID);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const currentUploads = docSnap.data().documentUploads || [];
+  
+        // Filter out the document with the matching timestamp
+        const updatedUploads = currentUploads.filter(
+          (upload) => upload.timestamp !== timestampToDelete
+        );
+  
+        await updateDoc(docRef, {
+          documentUploads: updatedUploads,
+        });
+  
+        Swal.fire('Deleted!', 'The document has been removed.', 'success');
+        fetchDoc(); // Refresh the document list
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      Swal.fire('Error', 'Failed to delete the document. Check console.', 'error');
+    }
+  };
   
 
   return (
     <div>
+        <h3 style={{ marginTop: '2rem' }}>Uploaded Documents</h3>
+
+{documentUploads.length === 0 ? (
+  <p>No documents uploaded yet.</p>
+) : (
+  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
+    <thead>
+      <tr style={{ backgroundColor: '#f0f0f0' }}>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>#</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Description</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Uploaded On</th>
+        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Files</th>
+      </tr>
+    </thead>
+    <tbody>
+      {documentUploads.map((upload, index) => (
+        <tr key={index}>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{upload.description}</td>
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+            {new Date(upload.timestamp).toLocaleString()}
+          </td>
+        
+          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
+  <ul style={{ margin: 0, paddingLeft: '1rem' }}>
+    {upload.files.map((file, idx) => (
+      <li key={idx}>
+        <a href={file.url} target="_blank" rel="noopener noreferrer">
+          {file.name}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <button
+    style={{
+      marginTop: '0.5rem',
+      backgroundColor: '#e74c3c',
+      color: 'white',
+      border: 'none',
+      padding: '6px 10px',
+      cursor: 'pointer',
+      borderRadius: '4px',
+      float: 'right',
+    }}
+    onClick={() => handleDeleteUpload(upload.timestamp)}
+  >
+    Delete
+  </button>
+</td>
+
+        </tr>
+      ))}
+    </tbody>
+  </table>
+)}
     <h3>Upload Meeting Documents</h3>
     <ul>
       <li className="form-row">
@@ -136,44 +229,7 @@ const DocumentUpload = ({ eventID, data = {}, fetchData }) => {
     </ul>
 
    
-    <h3 style={{ marginTop: '2rem' }}>Uploaded Documents</h3>
-
-{documentUploads.length === 0 ? (
-  <p>No documents uploaded yet.</p>
-) : (
-  <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem' }}>
-    <thead>
-      <tr style={{ backgroundColor: '#f0f0f0' }}>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>#</th>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Description</th>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Uploaded On</th>
-        <th style={{ border: '1px solid #ddd', padding: '8px' }}>Files</th>
-      </tr>
-    </thead>
-    <tbody>
-      {documentUploads.map((upload, index) => (
-        <tr key={index}>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{index + 1}</td>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>{upload.description}</td>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-            {new Date(upload.timestamp).toLocaleString()}
-          </td>
-          <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-            <ul style={{ margin: 0, paddingLeft: '1rem' }}>
-              {upload.files.map((file, idx) => (
-                <li key={idx}>
-                  <a href={file.url} target="_blank" rel="noopener noreferrer">
-                    {file.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-)}
+  
 
   </div>
   );

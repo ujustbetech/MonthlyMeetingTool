@@ -144,12 +144,14 @@ const KnowledgeSharingSection = ({ eventID, data = {}, fetchData }) => {
               </div>
 
               <h4>Topic Name:<sup>*</sup></h4>
-              <textarea
+              <div className="multipleitem">
+              <input
+              type='text'
                 placeholder="Topic Name"
                 value={section.topic}
                 onChange={(e) => handleFieldChange(index, 'topic', e.target.value)}
               />
-
+</div>
               <h4>Description:<sup>*</sup></h4>
               <textarea
                 placeholder="Description"

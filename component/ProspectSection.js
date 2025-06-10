@@ -142,14 +142,15 @@ const ProspectSection = ({ eventID, data = {}, fetchData }) => {
 )}
 
               </div>
-
+              <div className='autosuggest'>
               <h4>Prospect Name:<sup>*</sup></h4>
-              <textarea
+              <input
+                type="text"
                 placeholder="Name"
                 value={section.prospectName}
                 onChange={(e) => handleFieldChange(index, 'prospectName', e.target.value)}
               />
-
+</div>
               <h4>Detailed Info:<sup>*</sup></h4>
               <textarea
                 placeholder="Description"
