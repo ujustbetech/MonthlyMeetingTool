@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../firebaseConfig";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore"; // ✅ Correct
+
+import { db } from "../firebaseConfig"; 
 import axios from "axios";
 import "../pages/events/frontend.css"; // Make sure to import your SCSS file
 import Layout from '../component/Layout'
@@ -43,6 +44,11 @@ const BirthdayPage = () => {
     console.log("🎉 Final birthday list:", birthdayUsers);
     setUsers(birthdayUsers);
   };
+const sanitizeText = (text) =>
+  text
+    .replace(/\s{5,}/g, " ")     // Collapse 5+ spaces
+    .replace(/[\n\r\t]+/g, " ")  // Remove newlines/tabs
+    .trim();
 
   const sendWhatsAppMessage = async (user) => {
     const templateName = "daily_reminder";
@@ -55,74 +61,146 @@ const BirthdayPage = () => {
     // Log the entire user object to inspect its structure
     console.log("User Object:", user);
 
-    // Check if the phone number is valid and properly formatted
-    if (!phoneNumber || phoneNumber.trim() === "") {
-      alert("Phone number is missing or invalid.");
-      return;
-    }
+     if (!phoneNumber || phoneNumber.trim() === "") {
+    alert("Phone number is missing or invalid.");
+    return;
+  }
 
-    // Ensure phone number is in international format without the "+" sign
-    phoneNumber = phoneNumber.replace(/^\+/, ""); // Remove "+" if exists
+  const originalPhone = phoneNumber;
+  phoneNumber = phoneNumber.replace(/^\+/, "");
 
-    // Check if phone number is numeric and has a valid length (assuming 10 digits minimum for most countries)
-    if (!/^\d{10,15}$/.test(phoneNumber)) {
-      alert("Phone number is not in a valid format.");
-      return;
-    }
+  if (!/^\d{10,15}$/.test(phoneNumber)) {
+    alert("Phone number is not in a valid format.");
+    return;
+  }
 
-    // Ensure name is defined
-    if (!name || name.trim() === "") {
-      alert("Name is missing.");
-      return;
-    }
+  if (!name || name.trim() === "") {
+    alert("Name is missing.");
+    return;
+  }
 
-    try {
-      await axios.post(
-        `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
-        {
-          messaging_product: "whatsapp",
-          to: phoneNumber,  // Correctly formatted phone number
-          type: "template",
-          template: {
-            name: templateName,
-            language: { code: "en" },
-            components: [
-              {
-                type: "header",
-                parameters: [
-                  {
-                    type: "image",
-                    image: { link: imageUrl },
-                  },
-                ],
-              },
-              {
-                type: "body",
-                parameters: [
-                  {
-                    type: "text",
-                    text: `Happy Birthday, ${name}!`, // Added default text for the body
-                  },
-                ],
-              },
-            ],
-          },
+  try {
+    // 🎂 Message to birthday user (Orbiter)
+  const cleanMessage = sanitizeText(`Today Be Special, Connect with Love and Grow in Abundance.
+
+UJustBe Universe wishes you a day full of happiness and a year that brings you much success.
+May all life's blessings be yours, on your birthday and always.
+
+Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
+
+    await axios.post(
+      `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+      {
+        messaging_product: "whatsapp",
+        to: phoneNumber,
+        type: "template",
+        template: {
+          name: templateName,
+          language: { code: "en" },
+          components: [
+            {
+              type: "header",
+              parameters: [
+                {
+                  type: "image",
+                  image: { link: imageUrl },
+                },
+              ],
+            },
+            {
+              type: "body",
+              parameters: [
+                { type: "text", text: name },
+                { type: "text", text: cleanMessage},
+              ],
+            },
+          ],
         },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // 🎉 Fetch mentor details
+    const mentorDocRef = doc(db, "userdetail", originalPhone);
+    const mentorSnap = await getDoc(mentorDocRef);
+
+    if (mentorSnap.exists()) {
+  const mentorData = mentorSnap.data();
+  const mentorName = mentorData["Mentor Name"];
+  let mentorPhone = mentorData["Mentor Phone"];
+  const gender = mentorData["Gender"]?.toLowerCase(); // assuming "Male" or "Female"
+  // then proceed to send the WhatsApp message...
+
+      if (mentorPhone && /^\d{10,15}$/.test(mentorPhone)) {
+        mentorPhone = mentorPhone.toString();
+  let pronoun = "them";
+  if (gender === "male") pronoun = "him";
+  else if (gender === "female") pronoun = "her";
+
+  const mentorMessage = `Today is your connect's (${name}) birthday so kindly wish ${pronoun}.`;
+
+
+
+      
+
+        // 🎁 Send message to mentor
+        await axios.post(
+          `https://graph.facebook.com/v21.0/${phoneNumberId}/messages`,
+          {
+            messaging_product: "whatsapp",
+            to: mentorPhone,
+            type: "template",
+           template: {
+  name: "daily_reminder",
+  language: { code: "en" },
+  components: [
+    {
+      type: "header",
+      parameters: [
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
+          type: "image",
+          image: { link: imageUrl }, // must be a valid HTTPS image
+        },
+      ],
+    },
+    {
+      type: "body",
+      parameters: [
+        { type: "text", text: name },      // {{1}}
+        { type: "text", text: mentorMessage } // {{2}}
+      ],
+    },
+  ],
+}
+
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      alert(`WhatsApp message sent to ${name}`);
-    } catch (error) {
-      console.error("Error sending message", error.response?.data || error);
-      alert(`Failed to send message to ${name}`);
+        alert(`WhatsApp message sent to mentor ${mentorName}`);
+      } else {
+        console.log("Invalid or missing mentor phone number.");
+      }
+    } else {
+      console.log("Mentor details not found for user with phone:", originalPhone);
     }
-  };
 
+    alert(`WhatsApp message sent to ${name}`);
+  } catch (error) {
+    console.error("Error sending message", error.response?.data || error);
+    alert(`Failed to send message to ${name}`);
+  }
+};
   useEffect(() => {
     fetchBirthdayUsers();
   }, []);
