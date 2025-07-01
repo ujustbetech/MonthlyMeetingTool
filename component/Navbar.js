@@ -41,14 +41,14 @@ const Navbar = (props) => {
                                 <li><Link href="/AddBirthday">Add Canva</Link></li>
                             </ul>
                         </li>
-                          <li>
+                          {/* <li>
                             <Link href="/admin/event/cpmembers">
                                 <span className="icons"><FaRegUser /></span>
                                 <span className="linklabel">Add Orbiters</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
                            
-                        </li>
+                        </li> */}
                         <li>
                             <Link href="/admin/event/userlist">
                                 <span className="icons"><FaRegUser /></span>

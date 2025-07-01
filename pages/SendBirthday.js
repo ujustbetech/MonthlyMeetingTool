@@ -227,85 +227,100 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
   return (
     <Layout>
     <div className="birthday-page">
-      <h2>🎉 Today's and Tomorrow's Birthdays</h2>
+      <h2>Today's and Tomorrow's Birthdays</h2>
 
-      <div className="birthday-section today">
-        <h3>🎂 Today's Birthdays</h3>
-        {todayBirthdays.length === 0 ? (
-          <p>No birthdays today.</p>
-        ) : (
-          todayBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["phone"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-              <button
-                onClick={() => sendWhatsAppMessage(user)}
-                className="send-message-btn"
-              >
-                Send WhatsApp Message
-              </button>
-            </div>
-          ))
+     <div className="birthday-section today">
+  <h3>
+     Today's Birthday:{" "}
+    {new Date().toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    })},{" "}
+    {new Date().toLocaleDateString("en-GB", { weekday: "long" })}
+  </h3>
+
+  {todayBirthdays.length === 0 ? (
+    <p>No birthdays today.</p>
+  ) : (
+    todayBirthdays.map((user) => (
+<div key={user.id} className="birthday-card">
+  <div className="birthday-info">
+    <h3>{user.name}</h3>
+    <p>
+      DOB:{" "}
+      {new Date(user.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })}
+    </p>
+    <p>Mobile: {user["phone"]}</p>
+    <button
+      onClick={() => sendWhatsAppMessage(user)}
+      className="send-message-btn"
+    >
+      Send 
+    </button>
+  </div>
+
+  {user.imageUrl && (
+    <img
+      src={user.imageUrl}
+      alt={user.name}
+      className="birthday-image top-right"
+    />
+  )}
+</div>
+
+
+    ))
+  )}
+</div>
+
+<div className="birthday-section tomorrow">
+  <h3>
+     Tomorrow's Birthday:{" "}
+    {new Date(Date.now() + 86400000).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "2-digit",
+    })},{" "}
+    {new Date(Date.now() + 86400000).toLocaleDateString("en-GB", {
+      weekday: "long",
+    })}
+  </h3>
+
+  {tomorrowBirthdays.length === 0 ? (
+    <p>No birthdays tomorrow.</p>
+  ) : (
+    tomorrowBirthdays.map((user) => (
+      <div key={user.id} className="birthday-card">
+       
+  <div className="birthday-info">
+    <h3>{user.name}</h3>
+    <p>
+      DOB:{" "}
+      {new Date(user.dob).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      })}
+    </p>
+    <p>Mobile: {user["phone"]}</p>
+  </div>
+        {user.imageUrl && (
+          <img
+            src={user.imageUrl}
+            alt={user.name}
+       className="birthday-image top-right"
+          />
         )}
       </div>
+    ))
+  )}
+</div>
 
-      <div className="birthday-section tomorrow">
-        <h3>🎂 Tomorrow's Birthdays</h3>
-        {tomorrowBirthdays.length === 0 ? (
-          <p>No birthdays tomorrow.</p>
-        ) : (
-          tomorrowBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["phone"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-              <button
-                onClick={() => sendWhatsAppMessage(user)}
-                className="send-message-btn"
-              >
-                Send WhatsApp Message
-              </button>
-            </div>
-          ))
-        )}
-      </div>
-
-      <div className="birthday-section upcoming">
-        <h3>🎂 Upcoming Birthdays</h3>
-        {upcomingBirthdays.length === 0 ? (
-          <p>No upcoming birthdays.</p>
-        ) : (
-          upcomingBirthdays.map((user) => (
-            <div key={user.id} className="birthday-card">
-              <h3>{user.Name}</h3>
-              <p>🎂 DOB: {user.dob}</p>
-              <p>📱 Mobile: {user["Mobile no"]}</p>
-              {user.imageUrl && (
-                <img
-                  src={user.imageUrl}
-                  alt={user.Name}
-                  className="birthday-image"
-                />
-              )}
-            </div>
-          ))
-        )}
-      </div>
     </div>
     </Layout>
   );
