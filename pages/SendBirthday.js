@@ -18,6 +18,7 @@ const BirthdayPage = () => {
 
   const today = getFormattedDate(0);
   const tomorrow = getFormattedDate(1);
+const [sentMessages, setSentMessages] = useState([]);
 
   const fetchBirthdayUsers = async () => {
     const querySnapshot = await getDocs(collection(db, "birthdaycanva"));
@@ -125,6 +126,7 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
       }
     );
 
+
     // 🎉 Fetch mentor details
     const mentorDocRef = doc(db, "userdetail", originalPhone);
     const mentorSnap = await getDoc(mentorDocRef);
@@ -171,7 +173,7 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
     {
       type: "body",
       parameters: [
-        { type: "text", text: name },      // {{1}}
+        { type: "text", text: mentorName },      // {{1}}
         { type: "text", text: mentorMessage } // {{2}}
       ],
     },
@@ -194,10 +196,12 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
     } else {
       console.log("Mentor details not found for user with phone:", originalPhone);
     }
-
+setSentMessages((prev) => [...prev, user.id]);
     alert(`WhatsApp message sent to ${name}`);
   } catch (error) {
     console.error("Error sending message", error.response?.data || error);
+    
+
     alert(`Failed to send message to ${name}`);
   }
 };
@@ -231,7 +235,7 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
 
      <div className="birthday-section today">
   <h3>
-     Today's Birthday:{" "}
+     Today's Birthdays:{" "}
     {new Date().toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -256,12 +260,20 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
       })}
     </p>
     <p>Mobile: {user["phone"]}</p>
-    <button
-      onClick={() => sendWhatsAppMessage(user)}
-      className="send-message-btn"
-    >
-      Send 
-    </button>
+  <p>MentOrbiter: {user.mentorName}</p>
+
+ {sentMessages.includes(user.id) ? (
+  <button style={{backgroundColor:"#16274f"}}className="send-message-btn">Sent </button>
+) : (
+  <button
+    onClick={() => sendWhatsAppMessage(user)}
+    className="send-message-btn"
+  >
+    Send
+  </button>
+)}
+
+
   </div>
 
   {user.imageUrl && (
@@ -280,7 +292,7 @@ Happy Birthday!!!🥳🎂🎊🎊🎂🎉`);
 
 <div className="birthday-section tomorrow">
   <h3>
-     Tomorrow's Birthday:{" "}
+     Tomorrow's Birthdays:{" "}
     {new Date(Date.now() + 86400000).toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
