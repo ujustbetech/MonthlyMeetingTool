@@ -52,12 +52,7 @@ const Navbar = (props) => {
                                 <li><Link href="/admin/event/manageconclave">Manage Conclave</Link></li>
                             </ul>
                         </li>
-                         <li>
-                            <Link href="/admin/profile">
-                                <span className="icons"><ImProfile /></span>
-                                <span className="linklabel">Profiling</span>
-                            </Link>
-                        </li>
+                        
                           {/* <li>
                             <Link href="/admin/event/cpmembers">
                                 <span className="icons"><FaRegUser /></span>
