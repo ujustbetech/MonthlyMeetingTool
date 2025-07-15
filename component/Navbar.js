@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaRegImage } from "react-icons/fa6";
+import { ImProfile } from "react-icons/im";
 import { MdEventAvailable, MdImage, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiListSettingsLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
@@ -7,7 +7,7 @@ import { BsCake2 } from "react-icons/bs";
 import Link from 'next/link';
 import { useRouter } from "next/router";
 import { BsCashCoin } from "react-icons/bs";
-
+import { GrGroup } from "react-icons/gr";
 const Navbar = (props) => {
     const router = useRouter();
     
@@ -40,6 +40,23 @@ const Navbar = (props) => {
                                 <li><Link href="/SendBirthday">Send Canva</Link></li>
                                 <li><Link href="/AddBirthday">Add Canva</Link></li>
                             </ul>
+                        </li>
+                            <li>
+                            <Link href="/admin/event/addEvent">
+                                <span className="icons"><GrGroup /></span>
+                                <span className="linklabel">Conclave</span>
+                                <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
+                            </Link>
+                            <ul>
+                                <li><Link href="/admin/event/createconclave">Add Conclave</Link></li>
+                                <li><Link href="/admin/event/manageconclave">Manage Conclave</Link></li>
+                            </ul>
+                        </li>
+                         <li>
+                            <Link href="/admin/profile">
+                                <span className="icons"><ImProfile /></span>
+                                <span className="linklabel">Profiling</span>
+                            </Link>
                         </li>
                           {/* <li>
                             <Link href="/admin/event/cpmembers">
