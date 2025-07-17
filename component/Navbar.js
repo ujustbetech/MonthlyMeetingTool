@@ -41,17 +41,7 @@ const Navbar = (props) => {
                                 <li><Link href="/AddBirthday">Add Canva</Link></li>
                             </ul>
                         </li>
-                            <li>
-                            <Link href="/admin/event/addEvent">
-                                <span className="icons"><GrGroup /></span>
-                                <span className="linklabel">Conclave</span>
-                                <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
-                            </Link>
-                            <ul>
-                                <li><Link href="/admin/event/createconclave">Add Conclave</Link></li>
-                                <li><Link href="/admin/event/manageconclave">Manage Conclave</Link></li>
-                            </ul>
-                        </li>
+                          
                         
                           {/* <li>
                             <Link href="/admin/event/cpmembers">
