@@ -1,5 +1,6 @@
 import React from 'react';
 import { ImProfile } from "react-icons/im";
+import { FaPeopleArrows } from "react-icons/fa";
 import { MdEventAvailable, MdImage, MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { RiListSettingsLine } from "react-icons/ri";
 import { FaRegUser } from "react-icons/fa";
@@ -41,24 +42,36 @@ const Navbar = (props) => {
                                 <li><Link href="/AddBirthday">Add Canva</Link></li>
                             </ul>
                         </li>
-                          
-                        
-                          {/* <li>
-                            <Link href="/admin/event/cpmembers">
-                                <span className="icons"><FaRegUser /></span>
-                                <span className="linklabel">Add Orbiters</span>
-                                <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
-                            </Link>
-                           
-                        </li> */}
-                        <li>
-                            <Link href="/admin/event/userlist">
-                                <span className="icons"><FaRegUser /></span>
-                                <span className="linklabel">Users</span>
+                            <li>
+                            <Link href="">
+                                <span className="icons"><GrGroup /></span>
+                                <span className="linklabel">Conclave</span>
                                 <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
                             </Link>
                             <ul>
-                                <li><Link href="/admin/event/userlist">Users Listing</Link></li>
+                                <li><Link href="/admin/event/createconclave">Add Conclave</Link></li>
+                                <li><Link href="/admin/event/manageconclave">Manage Conclave</Link></li>
+                            </ul>
+                        </li>
+                       <li>
+                            <Link href="">
+                                <span className="icons"><FaPeopleArrows /></span>
+                                <span className="linklabel">Referrals</span>
+                                <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
+                            </Link>
+                            <ul>
+                                <li><Link href="/admin/AddReferral">Add Referrals</Link></li>
+                                <li><Link href="/admin/ManageReferrals">Manage Referrals</Link></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <Link href="/admin/event/userlist">
+                                <span className="icons"><FaRegUser /></span>
+                                <span className="linklabel">Orbiters</span>
+                                <span className="submenuIcon"><MdOutlineKeyboardArrowDown /></span>
+                            </Link>
+                            <ul>
+                                <li><Link href="/admin/event/userlist">Orbiters Profiling</Link></li>
                             </ul>
                         </li>
                        

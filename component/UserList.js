@@ -4,6 +4,7 @@ import { collection, getDocs,setDoc, deleteDoc, doc } from 'firebase/firestore';
 import "../src/app/styles/main.scss";
 import { FaSearch } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import ExportButton from '../pages/admin/Export';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -43,7 +44,7 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
     };
 
     try {
-        await setDoc(doc(db, 'userdetails', newUser.phoneNumber), userDoc);
+        await setDoc(doc(db, 'userdetail', newUser.phoneNumber), userDoc);
         setUsers([...users, {
             id: newUser.phoneNumber,
             name: newUser.name,
@@ -67,29 +68,35 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
 };
 
     // Fetch users from Firestore
-    useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const userCollection = collection(db, 'userdetails');
-                const userSnapshot = await getDocs(userCollection);
-                
-                const userList = userSnapshot.docs.map(doc => ({
-                    id: doc.id, // Store document ID for deletion
-                    phoneNumber: doc.data()["Mobile no"],
-                    name: doc.data()[" Name"],
-                    role: doc.data()["Category"]
-                }));
+ useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const userCollection = collection(db, 'userdetail'); // Fixed collection name
+      const userSnapshot = await getDocs(userCollection);
 
-                setUsers(userList);
-                setLoading(false);
-            } catch (err) {
-                setError('Error fetching user data.');
-                setLoading(false);
-            }
+      const userList = userSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          phoneNumber: data["Mobile no"] || '',
+          name: data[" Name"] || '',
+          role: data["Category"] || '',
+          idNumber: data["ID Number"] || '',
+           status: data["Profile Status"] || '',
         };
+      });
 
-        fetchUsers();
-    }, []);
+      setUsers(userList);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setError('Error fetching user data.');
+      setLoading(false);
+    }
+  };
+
+  fetchUsers();
+}, []);
 
     // Filter users based on name and phone filters
     const filteredUsers = users.filter(user => {
@@ -136,9 +143,8 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
         <>
             <section className='c-form box'>
                 <h2>User Master Table List</h2>
-                <button className="m-button-5" onClick={() => window.history.back()}>
-                    Back
-                </button>
+            
+                <ExportButton/>
 <div>
     <h2>Add New User</h2>
     <form onSubmit={handleAddUser}>
@@ -250,15 +256,17 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
                 {error && <p style={{ color: 'red' }}>{error}</p>}
                 {!loading && !error && (
                     <table className='table-class'>
-                        <thead>
-                            <tr>
-                                <th>Sr no</th>
-                                <th>Name</th>
-                                <th>Mobile No</th>
-                                <th>Role</th>
-                                <th>Actions</th> {/* Actions column */}
-                            </tr>
-                        </thead>
+                     <thead>
+  <tr>
+    <th>Sr no</th>
+    <th>Name</th>
+    <th>Mobile No</th>
+    <th>Role</th>
+    <th>Profile Status</th>
+    <th>Actions</th>
+  </tr>
+</thead>
+
                         <thead>
                             <tr>
                                 <th></th>
@@ -307,31 +315,81 @@ const formattedDOB = formatDOB(newUser.dob); // Convert to dd/mm/yyyy
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {filteredUsers.length > 0 ? (
-                                filteredUsers.map((user, index) => (
-                                    <tr key={index}>
-                                        <td>{index + 1}</td>
-                                        <td>{user.name || 'No name available'}</td>
-                                        <td>{user.phoneNumber || 'No phone available'}</td>
-                                        <td>{user.role || 'User'}</td> {/* You can adjust the role here */}
-                                        <td>
-                                            <button 
-                                                className='m-button-7' 
-                                                onClick={() => openDeleteModal(user)} 
-                                                style={{ backgroundColor: '#f16f06', color: 'white' }}
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="5">No users found.</td>
-                                </tr>
-                            )}
-                        </tbody>
+               <tbody>
+  {filteredUsers.length > 0 ? (
+    filteredUsers
+    .sort((a, b) => {
+  const statusOrder = [
+    "verified",
+    "submitted",
+    "in process",
+    "pending",
+    "inactive",
+    "incomplete"
+  ];
+
+  // Normalize statuses (lowercase, fallback to "incomplete")
+  const aStatus = a.status ? a.status.toLowerCase().trim() : "incomplete";
+  const bStatus = b.status ? b.status.toLowerCase().trim() : "incomplete";
+
+  const aIndex = statusOrder.indexOf(aStatus);
+  const bIndex = statusOrder.indexOf(bStatus);
+
+  // Sort based on status priority
+  if (aIndex !== bIndex) {
+    return aIndex - bIndex;
+  }
+
+  // If status is same → sort alphabetically by name
+  const nameA = (a.name || "").toLowerCase();
+  const nameB = (b.name || "").toLowerCase();
+  return nameA.localeCompare(nameB);
+})
+
+      .map((user, index) => (
+        <tr key={index}>
+          <td>{index + 1}</td>
+          <td>{user.name || "No name available"}</td>
+          <td>{user.phoneNumber || "No phone available"}</td>
+          <td>{user.role || "User"}</td>
+      <td>
+  {user.status && user.status.trim() !== "" ? (
+    <span className={`status ${user.status.toLowerCase().replace(" ", "-")}`}>
+      {user.status}
+    </span>
+  ) : (
+    <span className="status incomplete">Incomplete</span>
+  )}
+</td>
+
+
+          <td>
+            <div className="twobtn">
+              <button
+                className="m-button-7"
+                onClick={() => openDeleteModal(user)}
+                style={{ backgroundColor: "#f14506ff", color: "white", marginRight: "5px" }}
+              >
+                Delete
+              </button>
+              <button
+                className="m-button-7"
+                onClick={() => window.location.href = `/admin/profile?user=${user.phoneNumber}`}
+                style={{ backgroundColor: "#f16f06", color: "white" }}
+              >
+                Edit
+              </button>
+            </div>
+          </td>
+        </tr>
+      ))
+  ) : (
+    <tr>
+      <td colSpan="6">No users found.</td>
+    </tr>
+  )}
+</tbody>
+
                     </table>
                 )}
 

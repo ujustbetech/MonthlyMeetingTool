@@ -3,13 +3,14 @@ import { FiHome } from "react-icons/fi";
 import { TbBulb } from "react-icons/tb";
 import { MdOutlineBusinessCenter } from "react-icons/md";
 import { BiSolidCoinStack } from "react-icons/bi";
-import { GrBraille } from "react-icons/gr";
+import { GrGroup } from "react-icons/gr";
 import { useState, useEffect } from 'react';
 import { doc, getDoc, collection, getDocs, setDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useRouter } from 'next/router';
 import Link from 'next/link'
-
+import { MdBusinessCenter } from "react-icons/md";
+import { HiUser } from "react-icons/hi2";
 function HeaderNav() {
     const router = useRouter();
       const [phoneNumber, setPhoneNumber] = useState('');
@@ -115,25 +116,37 @@ function HeaderNav() {
       
       
     return (
-        <div className="sticky-buttons-container">
-            <div className="icon-wrapper" title="Home" >
-                <FiHome size={26} onClick={() => router.push("/")} />
-                {/* <span className="red-dot" /> */}
-            </div>
-         {/* <div className="icon-wrapper" title="NT Meetings">
-  <GrBraille size={26} onClick={() => router.push("/NTmeetdetails")} />
-</div> 
-<div className="icon-wrapper" title="Monthly Meetings">
-  <MdOutlineBusinessCenter size={26} onClick={() => router.push("/Monthlymeetdetails")} />
-</div>
-<div className="icon-wrapper" title="Suggestions">
-  <TbBulb size={26} onClick={() => router.push("/SuggestionList")} />
-</div>  */}
- <div className="icon-wrapper" title="CP Details">
-  <BiSolidCoinStack size={26} onClick={() => router.push(`/cp-details/${phoneNumber}`)} />
-</div> 
+            <div className="sticky-buttons-container">
+  <div className="icon-wrapper" onClick={() => router.push("/")}>
+    <FiHome size={26} />
+    <span className="icon-label">Home</span>
+  </div>
+  
 
-        </div>
+  
+  <div className="icon-wrapper" onClick={() => router.push("/Monthlymeetdetails")}>
+    <MdOutlineBusinessCenter size={26} />
+    <span className="icon-label">MM</span>
+  </div>
+    <div className="icon-wrapper" onClick={() => router.push("/ConclaveMeeting")}>
+    <GrGroup size={26} />
+    <span className="icon-label">Conclave</span>
+  </div>
+   <div className="icon-wrapper" onClick={() => router.push(`/cp-details/${phoneNumber}`)}>
+    <BiSolidCoinStack size={26} />
+    <span className="icon-label">CP</span>
+  </div>
+     <div className="icon-wrapper" onClick={() => router.push("/ReferralDetails")}>
+    <MdBusinessCenter size={26} />
+    <span className="icon-label">Referrals</span>
+  </div>
+  <div className="icon-wrapper" onClick={() => router.push("/ProfilePage")}>
+    <HiUser size={26} />
+    <span className="icon-label">My Profile</span>
+  </div>
+  
+ 
+</div>
     );
 }
 
